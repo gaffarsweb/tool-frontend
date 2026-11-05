@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+  }
+  body {
+    overscroll-behavior: none;
+    background-color: #11131b;
+    color: #e1e1ed;
+  }
+  main > :first-child {
+    margin-top: 0 !important;
+  }
+  main > :last-child {
+    margin-bottom: 0 !important;
+  }
+  ::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    background-color: rgba(29, 31, 40, 0.72);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+  }
+
+  .brand-gradient-text {
+    background-image: linear-gradient(90deg, #d0bcff, #4cd7f6, #98da27);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
