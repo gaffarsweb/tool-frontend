@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Icon } from '@/components/icons/Icon';
@@ -8,6 +7,7 @@ import { Card } from '@/components/surfaces/Card';
 import { brand } from '@/config/brand';
 import { apiFetch } from '@/lib/api-client';
 import { cn } from '@/lib/cn';
+import { PricingCardAction } from './PricingCardAction';
 
 interface Plan {
   slug: string;
@@ -20,8 +20,6 @@ interface Plan {
   orderIndex: number;
 }
 
-// Fallback plans used when the backend is unreachable or hasn't been seeded.
-// Keeps the page useful during the Phase-5 preview before `npm run db:seed` runs.
 const FALLBACK_PLANS: Plan[] = [
   {
     slug: 'free',
@@ -62,7 +60,6 @@ export const metadata: Metadata = {
   alternates: { canonical: `${brand.siteUrl}/pricing` },
 };
 
-// Revalidate every 5 minutes so plan changes in the admin flow through.
 export const revalidate = 300;
 
 async function loadPlans(): Promise<Plan[]> {
@@ -107,10 +104,7 @@ export default async function PricingPage() {
               return (
                 <Card
                   key={plan.slug}
-                  className={cn(
-                    'flex flex-col',
-                    highlight && 'border-primary/40 ring-1 ring-primary/40',
-                  )}
+                  className={cn('flex flex-col', highlight && 'border-primary/40 ring-1 ring-primary/40')}
                 >
                   {highlight && (
                     <Badge tone="primary" className="mb-space-md w-fit">
@@ -128,9 +122,7 @@ export default async function PricingPage() {
                       {formatPrice(plan.priceMonthly, plan.currency)}
                     </span>
                     {plan.priceMonthly > 0 && (
-                      <span className="font-body-sm text-body-sm text-on-surface-variant">
-                        /month
-                      </span>
+                      <span className="font-body-sm text-body-sm text-on-surface-variant">/month</span>
                     )}
                   </div>
                   {plan.priceAnnual > 0 && (
@@ -141,10 +133,7 @@ export default async function PricingPage() {
 
                   <ul className="mb-space-lg flex flex-col gap-space-sm">
                     {plan.features.map((f) => (
-                      <li
-                        key={f}
-                        className="flex items-start gap-space-sm font-body-md text-body-md text-on-surface"
-                      >
+                      <li key={f} className="flex items-start gap-space-sm font-body-md text-body-md text-on-surface">
                         <Icon name="check" size={16} className="mt-1 shrink-0 text-tertiary" />
                         <span>{f}</span>
                       </li>
@@ -152,26 +141,7 @@ export default async function PricingPage() {
                   </ul>
 
                   <div className="mt-auto">
-                    {plan.tier === 'FREE' ? (
-                      <Link
-                        href="/all-tools"
-                        className="inline-flex h-10 w-full items-center justify-center rounded-xl border border-white/[0.09] bg-surface-container-low px-4 font-label-lg text-label-lg text-on-surface transition-colors hover:border-secondary/50"
-                      >
-                        Start free
-                      </Link>
-                    ) : (
-                      <Link
-                        href="/auth/sign-up"
-                        className={cn(
-                          'inline-flex h-10 w-full items-center justify-center rounded-xl px-4 font-label-lg text-label-lg font-semibold transition-colors',
-                          highlight
-                            ? 'bg-primary-container text-on-primary-container shadow-[0_0_20px_-4px_rgba(160,120,255,0.4)] hover:bg-primary hover:text-on-primary'
-                            : 'border border-white/[0.09] bg-surface-container-low text-on-surface hover:border-secondary/50',
-                        )}
-                      >
-                        {highlight ? 'Start Pro trial' : 'Contact sales'}
-                      </Link>
-                    )}
+                    <PricingCardAction planSlug={plan.slug} tier={plan.tier} highlight={highlight} />
                   </div>
                 </Card>
               );
@@ -179,8 +149,8 @@ export default async function PricingPage() {
           </div>
 
           <p className="mt-space-xl font-body-sm text-body-sm text-on-surface-variant">
-            Prices shown in {sorted[0]?.currency ?? 'INR'}. Payment integration (Razorpay) lands in
-            Phase 9 — until then, checkout is deferred.
+            Prices shown in {sorted[0]?.currency ?? 'INR'}. Payments via Razorpay — test mode works
+            out of the box with Razorpay test keys. Cancellation is at period end.
           </p>
         </section>
       </main>
